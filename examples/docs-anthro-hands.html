@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Anthropomorphic hands</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Anthropomorphic hands</h1>
+		<h2>Demonstration of finger flexing and spreading</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+	
+
+		
+	var A = new Robotic.AnthroHand( true )
+			.setPosition( -2, 0.5, 0 )
+			.setRotation( -1, -1, 0 );
+			
+	var B = new Robotic.AnthroHand( false )
+			.setPosition( 2, 0.5, 0 )
+			.setRotation( -1, 1, 0 );
+		
+	Robotic.setCameraPosition( -2, 3, -10 );
+	Robotic.setCameraTarget( 0, 1.5, 0 );
+
+	Robotic.setAnimation( loop );
+
+
+	function loop( t, dT )
+	{
+		var s = 1 - Math.cos(3*t);
+		
+		if( Math.floor(3*t/Math.PI/2)%2 )
+		{
+			A.flexFingers( 0.8*s );
+			B.flexFingers( 0.8*s );
+		}
+		else
+		{
+			A.spreadFingers( 0.2*(2-s), true );
+			B.spreadFingers( 0.2*(2-s), true );
+		}
+	}
+	
+	</script>
+</body>

@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Interactive control</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+	
+	<style>
+		small {
+			display: block;
+			padding-left: 2em !important;
+			color: gray;
+			text-decoration: none;
+		}
+	</style>
+</head>
+
+
+<body>
+	<header>
+		<h1>Interactive control</h1>
+		<h2>Manual manipulation of a robot</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+	
+
+	var A = new Robotic.RoundHand( true );
+		A.setPosition( 0, 0.3, 0 );
+		A.spreadFingers( 0.3, false );
+		A.addGUI( );
+		
+	Robotic.setCameraPosition( 4, 2, -10 );
+	Robotic.setCameraTarget( 0, 1.5, 0 );
+
+	</script>
+</body>

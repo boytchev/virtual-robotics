@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Collision sensors</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Collision sensors</h1>
+		<h2>Sensing the collision with other objects</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class TouchRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var part = new Robotic.EdgedTip( 0.75 );
+			
+			this.addChain(
+				this,
+				new Robotic.MotorZ( PI/2, -PI/2, 0, 0.2, 0.3 ),
+				new Robotic.MotorY( -1, 1, 0, 0.2, 0.1 ),
+				new Robotic.EdgedFinger( 0.75 ),
+				new Robotic.MotorZ( 0.0, -PI/2, 0, 0.25, 0.08 ),
+				part,
+			);
+			
+			this.sensor = new Robotic.Sensor( false ).attachToSlot( part );
+		}
+	}
+
+
+	// create N robots in a row
+	
+	var n = 11,
+		robots = [];
+		
+	for( var i=0; i<n; i++ )
+	{
+		robots[i] = new TouchRobot;
+		robots[i].setPosition( 0, 0, Robotic.MathUtils.mapLinear( i, 0, n-1, -4, 4) );
+		robots[i].setAngles( 0.5, 0.8*Math.random()-0.4, 0 );
+	}
+
+
+	// create 2N boxes in a row
+
+	for( var i=0; i<2*n; i++ )
+	{
+		var box = new Robotic.Box( 0.1, 2, 0.3 );
+			box.setPosition( 0.8, Math.random()-0.5, Robotic.MathUtils.mapLinear( i, 0, 2*n-1, -4, 4) );
+			box.setRotation( 0.4*Math.random()-0.2, 1.0*Math.random()-0.5, 0.4*Math.random()-0.2 );
+	}
+
+
+	
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( -7, 7, 0 );
+
+
+
+	function loop( t, dT )
+	{
+		for( var robot of robots )
+		{
+			if( robot.sensor.senseCollision() ) continue;
+
+			robot.setAngle( 0, robot.getAngle(0)-dT/2 );
+			robot.setAngle( 2, robot.getAngle(0)-dT );
+		}
+	}
+
+
+	</script>
+</body>

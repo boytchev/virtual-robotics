@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Touch sensor</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Touch sensor</h1>
+		<h2>Touching a random blob</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class TouchRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var	firstPart = new Robotic.EdgedFinger( 0.75 ),
+				lastPart = new Robotic.EdgedTip( 0.75 );
+			
+			this.addChain(
+				this,
+				new Robotic.MotorZ( PI/2, -PI/2, 0, 0.2, 0.3 ),
+				firstPart,
+				new Robotic.MotorZ( 0.0, -PI/2, 0, 0.25, 0.08 ),
+				lastPart,
+			);
+			
+			var slot;
+
+			slot = new Robotic.Slot( 0.15, 0.65, 0 );
+			slot.setRotation( 0, 0, -Math.PI/2 );	
+			this.sensor1 = new Robotic.Sensor( false ).attachToSlot( firstPart, slot );
+
+			slot = new Robotic.Slot( 0.15, 0.65, 0 );
+			slot.setRotation( 0, 0, -Math.PI/2 );	
+			this.sensor2 = new Robotic.Sensor( false ).attachToSlot( lastPart, slot );
+		}
+	}
+
+
+	// create N robots in a circle
+	
+	var n = 12,
+		robots = [];
+		
+	for( var i=0; i<n; i++ )
+	{
+		var a = 2*Math.PI * i/n;
+		robots[i] = new TouchRobot;
+		robots[i].setPosition( 1.5*cos(a), 0.1, 1.5*sin(a) );
+		robots[i].setRotation( 0, Math.PI-a, 0 );
+		robots[i].setAngles( PI/2, -PI/6 );
+	}
+
+
+	// create a blob geometry
+
+	var geometry = new Robotic.SphereGeometry( 1, 48, 24 ),
+		pos = geometry.getAttribute( 'position' ),
+		randX = 1.5+Math.random(),
+		randY = 1.5+Math.random(),
+		randZ = 1.5+Math.random();
+	for( var i=0; i<pos.count; i++ )
+	{
+		var x = pos.getX( i ),
+			y = pos.getY( i ),
+			z = pos.getZ( i );
+			
+		pos.setXYZ( i, x+0.3*cos(randY*y), y+0.3*sin(randZ*z), z+0.3*cos(randX*x) );
+	}
+	geometry.computeVertexNormals();
+
+
+	// create a blob
+	
+	var blob = new Robotic.Mesh(
+			geometry,
+			new Robotic.MeshLambertMaterial( {color: 'dimgray'} )
+		);
+		blob.rotation.set( 3*Math.random(), 3*Math.random(), 3*Math.random() );
+		blob.position.set( 0, 0.7, 0 );
+		blob.castShadow = true;
+		blob.receiveShadow = true;
+		
+		Robotic.getScene().add( blob );
+		
+		
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 0, 8, 5 );
+
+
+	function loop( t, dT )
+	{
+		for( var robot of robots )
+		{
+			var touch1 = robot.sensor1.senseTouch(),
+				touch2 = robot.sensor2.senseTouch();
+				
+			if( touch1 == 0 && touch2 == 0 )
+				robot.setAngle( 0, robot.getAngle(0)-dT/2 );
+
+			if( touch1 != 0 && touch2 == 0 )
+				robot.setAngle( 1, robot.getAngle(1)-dT/2 );
+		}
+	}
+
+
+	</script>
+</body>

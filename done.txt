@@ -1,0 +1,49 @@
+﻿==================================================
+COMPLETED
+==================================================
+
+Scene
+	setVR( right, left );
+
+class Sensor
+	senseSpeed( )
+	senseVelocity( )
+	senseAccelerationMagnitude( )
+	senseAcceleration( )
+
+class Robot
+	setProperty( name, value )
+	getProperty( name )
+
+class Part
+	setProperty( name, value )
+	getProperty( name )
+	setScale( factor )
+
+class Sensor
+	senseDistance( maxDistance = Infinity )
+	senseDirection( )
+	senseProperty( name, maxDistance = Infinity )
+
+class Label
+	setText( text, x=10, y=10, font='bold 48px Arial' )
+	addText( text, x=10, y=10, font='bold 48px Arial' )
+
+examples
+	velocity-sensors.html
+	temperature-sensors.html
+	labels.html
+
+
+Removed native engine and folder engines
+
+==================================================
+WORK IN PROGRESS
+==================================================
+
+class Graph
+	setGrid( gridX, gridY, axisX, axisY )
+	setGraph( index, data, color='RoyalBlue', minX=-this.axisX, maxX=this.gridX-this.axisX, minY=-this.axisY, maxY=this.gridY-this.axisY )
+	...
+
+

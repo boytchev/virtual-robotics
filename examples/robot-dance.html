@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Robot dance</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Robot dance</h1>
+		<h2>50 robots trying to dance</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class Dancer extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			this.addChain(
+				this,
+				new Robotic.EdgedFinger( 1, 0.3, 0.3 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.15, 0.03 ),
+				new Robotic.EdgedFinger( 1, 0.2, 0.1 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.1, 0.03 ),
+				new Robotic.EdgedFinger( 1/3, 0.1, 0.1 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.1, 0.03 ),
+				new Robotic.EdgedTip( 1/3, 0.1, 0.1 )
+			);
+		}
+		
+	}
+
+
+	// number of dancers
+	const N = 50;
+	
+	const M = (N-1)/2;
+	
+	
+	var dancers = [];
+	
+	for( var i=0; i<N; i++ )
+	{
+		dancers[i] = new Dancer;
+		dancers[i].setPosition( 0, 0, 0.4*(i-M) );
+	}
+
+
+	Robotic.setCameraPosition( 25, 1, 0 );
+	Robotic.setAnimation( loop );
+
+
+	function loop( t )
+	{
+		for( var i=0; i<N; i++ )
+		{
+			var a = 2*PI*i/N,
+				s = cos(4*t) + cos(0.1*(i-M)) + 0.5*cos(0.3*(i-M)) + sin(i)%0.1;
+			
+			dancers[i].setAngles( 
+				-PI/2*(0.5 + 1.5*sin(t+s)),
+				-PI/2*(0.5 + 0.5*sin(2*t-s)),
+				-PI/2*(0.5 + 0.5*sin(5*t-2*s))
+			);
+		}
+	}
+
+
+	</script>
+</body>

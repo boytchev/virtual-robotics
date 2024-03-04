@@ -1,0 +1,20 @@
+﻿<!DOCTYPE html>
+
+
+<body>
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+
+	var robot = new Robotic.Robot;
+		robot.attachChain(
+				new Robotic.MotorZ,
+				new Robotic.EdgedFinger,
+				new Robotic.MotorZ,
+				new Robotic.EdgedFinger,
+				new Robotic.MotorZ,
+				new Robotic.EdgedFinger,
+			);
+	
+	</script>
+</body>

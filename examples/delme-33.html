@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+
+
+<body>
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+
+	class SimpleRobot extends Robotic.Robot
+	{
+		constructor( speed )
+		{
+			super( );
+			
+			this.attachChain(
+				new Robotic.MotorZ,
+				new Robotic.EdgedFinger,
+				new Robotic.MotorZ,
+				new Robotic.EdgedFinger,
+				new Robotic.MotorZ,
+				new Robotic.EdgedFinger,
+			);
+		}
+	}
+	
+	
+	var robot = new SimpleRobot;
+	
+
+	Robotic.setAnimation( loop );
+
+	function loop( t )
+	{
+		robot.setAngles( 
+			-0.7*Math.sin(t),
+			-1.6*(0.5 + 0.5*Math.sin(t)),
+			-1.6*(0.5 + 0.5*Math.sin(t))
+		);
+	}
+
+	</script>
+</body>

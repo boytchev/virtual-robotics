@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Several robots</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Several robots</h1>
+		<h2>An example of several robots in one scene</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	// robot A
+
+	class RobotA extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			this.addChain(
+				this,
+				new Robotic.MotorY( -Infinity, Infinity, 0, 1 ),
+				new Robotic.EdgedFinger( 1, 0.3, 0.3 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.15, 0.03 ),
+				new Robotic.EdgedFinger( 1.3, 0.2, 0.1 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.1, 0.03 ),
+				new Robotic.EdgedFinger( 0.3, 0.1, 0.1 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.1, 0.03 ),
+				new Robotic.EdgedTip( 0.3, 0.1, 0.1 )
+			);
+		}
+		
+	}
+
+
+
+	var A = [];
+	for( var i=0; i<6; i++ )
+	{
+		var a = 2*PI*i/6;
+		A[i] = new RobotA( a );
+		A[i].setPosition( 2*cos(a), 0, 2*sin(a) );
+	}
+
+
+	// robot B
+
+	class RobotB extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			this.addChain(
+				this,
+				new Robotic.EdgedFinger( 1, 0.3, 0.3 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.2, 0.04 ),
+				new Robotic.EdgedFinger( 1, 0.3, 0.3 ),
+				new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.2, 0.04 ),
+				new Robotic.EdgedTip( 0.3, 1, 0.1 )
+			)
+		}
+		
+	}
+
+	var B = new RobotB;
+		B.setPosition( 0, 0, 1 );
+
+
+	class RobotC extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+
+			var root = new Robotic.EdgedFinger( 1, 1, 0.3);
+			
+			this.addChain(
+				this,
+				root
+			);
+			
+			var left = new Robotic.MotorZ( 0, -PI/2, 0, 0.2, 0.04 );
+				left.attachToSlot( root, new Robotic.Slot(0,1,-0.3) );
+		
+			this.addChain(
+				left,
+				new Robotic.EdgedFinger( 0.5, 0.3, 0.3 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.2, 0.04 ),
+				new Robotic.EdgedTip( 0.5, 0.3, 0.3 )
+			);
+			
+			var right = new Robotic.MotorZ( 0, -PI/2, 0, 0.2, 0.04 );
+				right.attachToSlot( root, new Robotic.Slot(0,1,0.3) );
+		
+			this.addChain(
+				right,
+				new Robotic.EdgedFinger( 0.5, 0.3, 0.3 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.2, 0.04 ),
+				new Robotic.EdgedTip( 0.5, 0.3, 0.3 )
+			);
+		}
+	}
+
+	var C = new RobotC;
+
+	var C2 = new RobotC;
+		C2.setRotation( 0, Math.PI );
+		C2.setPosition( -0.3 );
+
+
+
+	Robotic.setAnimation( loop );
+
+
+	function loop( t )
+	{
+		for( var i=0; i<A.length; i++ )
+		{
+			var a = 2*PI*i/A.length;
+			A[i].setAngles( 
+				-a + PI/4*sin(2*t+i),
+				-PI/2*(0.5 + 0.5*sin(2*t+a)),
+				-PI/2*(0.5 + 0.5*sin(2*t-1+a)),
+				-PI/2*(0.5 + 0.5*sin(2*t-2+a))
+			);
+		}
+
+
+		B.setAngles(
+			-PI/2*(0.5+0.5*sin(3*t)),
+			-PI/2*(0.5+0.5*sin(3*t-200))
+		);
+
+
+		C.setAngles(
+			-PI/2*(0.5+0.5*sin(2*t)),
+			-PI/2*(0.5+1.0*sin(1.5*t)),
+			-PI/2*(0.5+0.5*sin(2*t-100)),
+			-PI/2*(0.5+1.0*sin(1.5*t-100))
+		);
+
+		C2.setAngles(
+			-PI/2*(0.5+0.5*sin(2*t)),
+			-PI/2*(0.5+1.0*sin(1.5*t)),
+			-PI/2*(0.5+0.5*sin(2*t-100)),
+			-PI/2*(0.5+1.0*sin(1.5*t-100))
+		);
+
+	}
+
+
+	</script>
+</body>

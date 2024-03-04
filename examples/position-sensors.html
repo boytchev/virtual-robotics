@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Position sensor</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Position sensor</h1>
+		<h2>Retrieving 3D position with a sensor</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class PositionRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var lastPart = new Robotic.EdgedTip( 0.45 );
+			
+			this.addChain(
+				this,
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.1, 0.5 ),
+				new Robotic.MotorZ( PI/2, -PI/2, 0, 0.2, 0.3 ),
+				new Robotic.EdgedFinger( 0.75 ),
+				new Robotic.MotorZ( 0.0, -PI/2, 0, 0.25, 0.08 ),
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.08, 0.2 ),
+				new Robotic.EdgedFinger( 0.75 ),
+				new Robotic.MotorZ( 0.0, -PI/2, 0, 0.25, 0.08 ),
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.08, 0.2 ),
+				lastPart,
+			);
+			
+			this.sensor = new Robotic.Sensor( ).attachToSlot( lastPart );
+		}
+	}
+
+
+	var robot = new PositionRobot;
+
+	var n = 500; //traces
+	var traces = [];
+	for( var i=0; i<n; i++ )
+	{
+		var trace = new Robotic.Mesh(
+			new Robotic.BoxGeometry( 0.02, 0.02, 0.02 ),
+			new Robotic.MeshLambertMaterial( {color: 'blue'} )
+		);
+		trace.castShadow = true;
+		traces.push( trace );
+	}
+	Robotic.getScene().add( ...traces );
+
+
+	
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 0, 6, 10 );
+
+	var i = 0;
+	function loop( t )
+	{
+		var s = sin(t)+0.5*sin(2*t);
+		var s2 = sin(4.1*t);
+		
+		robot.setAngles( 
+			t/3,
+			-PI/2*s,
+			-PI/2*(0.5-0.5*s),
+			3*sin(t)
+			-PI/2*(0.5-0.25*s)+s2,
+			-2*sin(t)
+		);
+		
+		var pos = robot.sensor.sensePosition( );
+		
+		traces[i%n].position.set( ...pos );
+		i++;
+
+	}
+
+
+
+	</script>
+</body>

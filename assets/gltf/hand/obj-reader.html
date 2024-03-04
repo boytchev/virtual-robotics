@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>OBJ Reader</title>
+	<meta charset="utf-8">
+</head>
+
+
+<body>
+	<script>
+
+		var obj = `
+# Blender v2.83.5 OBJ File: 'anthro-thumb.blend'
+# www.blender.org
+v -0.146494 -0.367610 0.113621
+v -0.146494 -0.026300 0.292415
+v -0.145969 -0.247771 -0.190741
+v -0.146494 -0.162450 -0.254010
+v 0.143156 -0.367610 0.113621
+v 0.143156 -0.026300 0.292415
+v 0.143681 -0.247771 -0.190741
+v 0.143156 -0.162450 -0.254010
+v 0.143372 -0.342032 -0.037101
+v -0.146292 -0.346114 -0.028110
+s off
+f 1 2 4 3 10
+f 3 4 8 7
+f 7 8 6 5 9
+f 5 6 2 1
+f 3 7 9 10
+f 8 4 2 6
+f 10 9 5 1
+`;
+
+		function r(x) { return Math.round(100*x)/100; }
+		
+		
+		obj = obj.split( '\n' );
+		
+		var vertices = [],
+			faces = [];
+			
+		for( var row of obj )
+		{
+			row = row.split( ' ' );
+			if( row[0] == 'v' )
+			{
+				vertices.push( `[${r(row[1])},${r(row[2])},${r(row[3])}]` );
+			}
+			else if( row[0] == 'f' )
+			{
+				var rs = [];
+				for( var i=1; i<row.length; i++ )
+					rs.push( row[i]-1 );
+					
+				faces.push( `[${rs.join(',')}]` );
+			}
+		}
+		
+		console.log( `[${vertices.join(',')}]` );
+		console.log( `[${faces.join(',')}]` );
+	</script>
+</body>

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Object sensors</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Object sensors</h1>
+		<h2>Robots playing by sensing a ball</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "./src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class PushRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var part = new Robotic.Box( 0.5, 0.1, 0.5, 'black' );
+				part.position.y = 0.05;
+			
+			this.sensor = new Robotic.Sensor( false );
+			this.sensor.attachToSlot( part );
+				
+			this.addChain(
+				this,
+				new Robotic.MotorZ( 0.6, -0.6, 0, 0.2, 0.3 ),
+				new Robotic.EdgedFinger( 1 ),
+				new Robotic.MotorZ( 0.0, -PI/2, 0, 0.25, 0.08 ),
+				new Robotic.EdgedFinger( 1.5, 0.2, 0.1 ),
+				new Robotic.MotorZ( 6, -6, 0, 0.25, 0.08 ),
+				part,
+			);
+		}
+		
+		set( angle )
+		{
+			this.setAngle( 0, angle );
+			this.setAngle( 1, -this.getAngle(0)-Math.PI/2 );
+			this.setAngle( 2, Robotic.MathUtils.mapLinear( this.sensor.sensePosition()[1],0.9,1.8,0,-0.8 ) );
+		}
+	}
+
+
+	// create robots
+	
+	var robotA = new PushRobot;
+		robotA.setPosition( -2.5, 0.1, 0 );
+
+	var robotB = new PushRobot;
+		robotB.setPosition( 2.5, 0.1, 0 );
+		robotB.setRotation( 0, Math.PI, 0 );
+
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 3, 3, 7 );
+
+
+	var ball = new Robotic.Ball( 1 );
+
+	Robotic.getScene().add( ball );
+	ball.setPosition( 0, 1, 0 );
+
+
+	function loop( t, dT )
+	{
+		if( robotA.sensor.senseObject(ball) && robotB.sensor.senseObject(ball) )
+		{
+			ball.position.x = (robotA.sensor.sensePosition()[0]+robotB.sensor.sensePosition()[0])/2;
+			ball.scale.x = (robotB.sensor.sensePosition()[0]-robotA.sensor.sensePosition()[0])/2;
+		}
+		else
+		{
+			if( robotA.sensor.senseObject(ball) && (Math.cos(1.5*t)<0) ) ball.position.x = robotA.sensor.sensePosition()[0]+1;
+			if( robotB.sensor.senseObject(ball) && (Math.cos(1.2*t)<0) ) ball.position.x = robotB.sensor.sensePosition()[0]-1;
+		}
+
+		robotA.set( Math.sin(1.5*t) );
+		robotB.set( Math.sin(1.2*t) );
+		
+	}
+
+
+	</script>
+</body>

@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Two GLTF hands</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Two GLTF hands</h1>
+		<h2>Prototype models of robotic GLTF hands</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const sin = Math.sin;
+	const cos = Math.cos;
+	
+	var data = {
+			speed: 3,
+			motion: true,
+			rotation: true,
+			grabbing: true,
+		};
+	
+	var gui = new Robotic.GUI();
+		gui.add( data, 'speed' ).min(0).max(6).step(0.2).name( 'Time speed' );
+		gui.add( data, 'motion' ).name( 'Forward-backward' );
+		gui.add( data, 'rotation' ).name( 'Palm rotation' );
+		gui.add( data, 'grabbing' ).name( 'Finger flexing' );
+
+
+	var A = new Robotic.RoundHand( true ),
+		B = new Robotic.RoundHand( false );
+
+
+	Robotic.setCameraPosition( 4, 2, -10 );
+	Robotic.setCameraTarget( 0, 1.5, 0 );
+	Robotic.setAnimation( loop );
+	
+	
+	var time = 0;
+	function loop( t, dT )
+	{
+		// increase speed
+		time += data.speed*dT;
+
+		// grabing with fingers
+		var k = data.grabbing ? 0.5 + 0.5*sin(time) : 0.1;
+		A.flexFingers( 1.5*k );
+		B.flexFingers( 1.5*k );
+
+		k = data.grabbing ? 0.5 + 0.5*sin(time) : 0.5;
+		A.spreadFingers( 0.2-0.2*k );
+		B.spreadFingers( 0.2-0.2*k );
+		
+		// adjusting thumbs
+		k = data.grabbing ? 0.5 + 0.5*sin(time+1) : 1;
+		A.spreadFinger( 0, k );
+		B.spreadFinger( 0, k );
+
+		// palm forward-backward motion
+		k = data.motion ? sin(time+2.5) : 0;
+		A.setPosition( -2+0.5*k, 1.5+0.5*k, -2*k);
+		B.setPosition( 2-0.5*k, 1.5+0.5*k, -2*k);
+
+		
+		// palm rotation
+		k = data.rotation ? 1 + sin(time+2) : 1.5;
+		A.setRotation( -0.5*k, -0.8*k,  0.5*k );
+		B.setRotation( -0.5*k,  0.8*k, -0.5*k );
+	}
+
+
+	</script>
+</body>

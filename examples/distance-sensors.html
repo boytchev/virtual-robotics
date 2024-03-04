@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Distance sensor</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Distance sensor</h1>
+		<h2>First test of distance sensors</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class TouchRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var firstPart = new Robotic.EdgedTip( 0.75 );
+			var lastPart = new Robotic.EdgedTip( 0.45 );
+			
+			this.addChain(
+				this,
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.1, 0.5 ),
+				new Robotic.MotorZ( PI/2, -PI/2, 0, 0.2, 0.3 ),
+				firstPart,
+				new Robotic.MotorZ( 0.0, -PI/2, 0, 0.25, 0.08 ),
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.08, 0.2 ),
+				lastPart,
+			);
+			
+			this.sensor = new Robotic.Sensor( true, 'blue' ).attachToSlot( lastPart );
+
+			var slot;
+
+			slot = new Robotic.Slot( 0.15, 0.40, 0 );
+			slot.setRotation( 0, 0, -Math.PI/2 );
+			this.sensorA = new Robotic.Sensor( true, true ).attachToSlot( firstPart, slot );
+
+			slot = new Robotic.Slot( -0.15, 0.40, 0 );
+			slot.setRotation( 0, 0, Math.PI/2 );
+			this.sensorB = new Robotic.Sensor( true, true ).attachToSlot( firstPart, slot );
+
+			slot = new Robotic.Slot( 0, 0.40, 0.15 );
+			slot.setRotation( Math.PI/2, 0, 0 );
+			this.sensorC = new Robotic.Sensor( true, true ).attachToSlot( firstPart, slot );
+
+			slot = new Robotic.Slot( 0, 0.40, -0.15 );
+			slot.setRotation( -Math.PI/2, 0, 0 );
+			this.sensorD = new Robotic.Sensor( true, true ).attachToSlot( firstPart, slot );
+
+
+
+			slot = new Robotic.Slot( 0.15, 0.45-0.15, 0 );
+			slot.setRotation( 0, 0, -Math.PI/2 );
+			this.sensorE = new Robotic.Sensor( true, true ).attachToSlot( lastPart, slot );
+
+			slot = new Robotic.Slot( -0.15, 0.45-0.15, 0 );
+			slot.setRotation( 0, 0, Math.PI/2 );
+			this.sensorF = new Robotic.Sensor( true, true ).attachToSlot( lastPart, slot );
+
+			slot = new Robotic.Slot( 0, 0.45-0.15, 0.15 );
+			slot.setRotation( Math.PI/2, 0, 0 );
+			this.sensorG = new Robotic.Sensor( true, true ).attachToSlot( lastPart, slot );
+
+			slot = new Robotic.Slot( 0, 0.45-0.15, -0.15 );
+			slot.setRotation( -Math.PI/2, 0, 0 );
+			this.sensorH = new Robotic.Sensor( true, true ).attachToSlot( lastPart, slot );
+		}
+	}
+
+
+	var robot = new TouchRobot;
+		robot.setPosition( -0.75, 0, 0 );
+
+	var n = 20; //blocks
+	for( var i=0; i<n; i++ )
+	{
+		var block = new Robotic.Mesh(
+			new Robotic.BoxGeometry( 2*Math.random(), 3+2*Math.random(), 2*Math.random() ),
+			new Robotic.MeshLambertMaterial( {color: `hsl(0,0%,${100*Math.random()}%)`} )
+		);
+		block.rotation.set( 0.2*Math.random(), 3*Math.random(), 0.2*Math.random() );
+		block.position.setFromSphericalCoords( 3+3*Math.random(), -1.75, i/n * 2*Math.PI );
+		block.castShadow = true;
+		block.receiveShadow = true;
+		Robotic.getScene().add( block );
+	}
+
+
+	
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 0, 6, 10 );
+
+	function loop( t )
+	{
+		var s = sin(t)+0.5*sin(2*t);
+		var s2 = sin(4.1*t);
+		
+		robot.setAngles( 
+			t/3,
+			-PI/2*s,
+			-PI/2*(0.5-0.5*s)+0*s2,
+			3*sin(t)
+		);
+		
+		robot.sensor.senseDistance( );
+
+		robot.sensorA.senseDistance( );
+		robot.sensorB.senseDistance( );
+		robot.sensorC.senseDistance( );
+		robot.sensorD.senseDistance( );
+
+		robot.sensorE.senseDistance( );
+		robot.sensorF.senseDistance( );
+		robot.sensorG.senseDistance( );
+		robot.sensorH.senseDistance( );
+
+	}
+
+
+	</script>
+</body>

@@ -1,0 +1,9 @@
+
+*.bak
+*.bkp
+src/mannequin-leftovers.js
+misc
+examples/video
+node_modules
+docs/.$shapes.drawio.dtmp
+examples/--delme.html

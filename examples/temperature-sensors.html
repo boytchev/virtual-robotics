@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Temperature sensors</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Temperature sensors</h1>
+		<h2>Using temperature sensors to avoid hot objects</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class Robot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+		
+			this.ball = new Robotic.Ball( 0.3, 'lightgray' );
+			this.lightBall = new Robotic.Ball( 0.3, 'gray' );
+			this.darkBall = new Robotic.Ball( 0.3, 'white' );
+			this.lightBall.mainMesh.scale.set( 1.5, 0.5, 1.5 );
+			this.darkBall.mainMesh.scale.set( 1.6, 0.2, 1.6 );
+			
+			this.addChain( this, this.ball, this.lightBall, this.darkBall );
+
+			var slot;
+			this.sensors = [];
+
+			var sn = 32; // number of sensors
+			for( var i=0; i<sn; i++ )
+			{
+				var alpha = 2*PI*i/sn;
+				slot = new Robotic.Slot( 0.28*cos(alpha), 0, 0.28*sin(alpha) );
+				slot.setRotation( 0, PI-alpha, PI/2 );
+				this.sensors.push( new Robotic.Sensor( false, 'crimson' ).attachToSlot( this.ball, slot ) );
+			}
+		}
+	}
+
+
+	var a = new Robotic.Mesh(
+		new Robotic.ConeGeometry(),
+		new Robotic.MeshLambertMaterial()
+	);
+	
+	
+	var robot = new Robot;
+		robot.setPosition( 0, 0.5, 0 );
+	
+	// walls
+	var wall;
+	
+	wall = new Robotic.Box( 16, 2, 0.2, 'dimgray' );
+	wall.setPosition( 0, 0, 5 );
+	wall.setProperty( 'temperature', 100 );
+	
+	wall = new Robotic.Box( 16, 2, 0.2, 'dimgray' );
+	wall.setPosition( 0, 0, -5 );
+	wall.setProperty( 'temperature', 100 );
+	
+	wall = new Robotic.Box( 0.2, 2, 10.2, 'dimgray' );
+	wall.setPosition( 8, 0, 0 );
+	wall.setProperty( 'temperature', 100 );
+	
+	wall = new Robotic.Box( 0.2, 2, 10.2, 'dimgray' );
+	wall.setPosition( -8, 0, 0 );
+	wall.setProperty( 'temperature', 100 );
+	
+	
+	// balls
+	var bn = 10;
+	var balls = [];
+	for( var i=0; i<bn; i++ )
+	{
+		var ball = new Robotic.Ball( 0.5, 'white' );
+			ball.setProperty( 'temperature', 100 );
+			
+		ball.ka = Math.random();
+		ball.kb = Math.random();
+		ball.kc = Math.random();
+		ball.kd = Math.random();
+			
+		balls.push( ball );
+	}
+	
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 0, 30, 0 );
+
+	var rot = 0;
+	function loop( t, dT )
+	{
+		robot.setRotation( 0.1*sin(2*t), rot, 0.1*cos(3*t) );
+		
+		for( var ball of balls )
+		{
+			ball.setPosition(
+				7*Math.sin( 0.2*(ball.ka+1)*t - 9*ball.kb ),
+				0.5,
+				4*Math.sin( 0.2*(ball.kc+1)*t + 7*ball.kd ),
+			);
+		}
+
+		var pos = robot.getPosition( );
+		
+		for( var sensor of robot.sensors )
+		{
+			var temp = Math.min( 100, sensor.senseProperty('temperature',2)/sensor.senseDistance(2)**2 );
+			var dir = sensor.senseDirection();
+			
+			pos[0] -= 0.01*dT*temp*dir[0];
+			pos[2] -= 0.01*dT*temp*dir[2];
+			
+			if(temp>10) rot += 0.003*dT*temp*sin(t/2);
+		}
+		pos[1] = 0.53+0.1*sin(3*t);
+		robot.setPosition( pos );
+	}
+
+
+	</script>
+</body>

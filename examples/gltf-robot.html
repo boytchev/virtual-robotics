@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>GLTF robot</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>GLTF robot</h1>
+		<h2>A robot with body parts loaded from GLTF files</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+	class GLTFRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var p;
+			
+			this.addChain(
+				this,
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.6, 0.1 ),
+				new Robotic.MotorZ( PI/2, -PI/2, 0, 0.34, 0.25 ),
+				new Robotic.RoundFinger( '../assets/gltf/round-finger-8.glb', 0.8 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.2, 0.12 ),
+				new Robotic.RoundFinger( '../assets/gltf/round-finger-5.glb', 0.5 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.2, 0.12 ),
+				new Robotic.RoundFinger( '../assets/gltf/round-finger-5.glb', 0.5 ),
+				p = new Robotic.MotorZ( 0, -PI/2, 0, 1, 0.12 ),
+				new Robotic.RoundFinger( '../assets/gltf/round-tip.glb', 0.5 ),
+			);
+
+			new Robotic.RoundFinger( '../assets/gltf/round-tip.glb', 0.5 )
+				.attachToSlot( p, new Robotic.Slot(0,0,0.4) );
+
+			new Robotic.RoundFinger( '../assets/gltf/round-tip.glb', 0.5 )
+				.attachToSlot( p, new Robotic.Slot(0,0,-0.4) );
+		}
+	}
+
+	var N = 8;
+	var robots = [];
+	
+	for( var i=0; i<N; i++ )
+	{
+		var alpha = 2*Math.PI * i/N,
+			r = 2.5;
+		
+		robots[i] = new GLTFRobot;
+		robots[i].setRotation( 0, alpha+Math.PI/2, 0 );
+		robots[i].setPosition( r*Math.sin(alpha), 0, r*Math.cos(alpha) );
+	}
+	
+
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 0, 4, 10 );
+
+	function loop( t )
+	{
+		t = t/2;
+
+		for( var i=0; i<N; i++, t+=3*Math.PI/N )
+			robots[i].setAngles( 
+				0,
+				-PI/4*(sin(2*t)),
+				-PI/2*(0.5 + 0.5*sin(2*t-1)),
+				-PI/2*(0.5 + 0.5*sin(2*t-2)),
+				-PI/2*(0.5 + 0.5*sin(2*t-3)),
+			);
+	}
+
+	</script>
+</body>

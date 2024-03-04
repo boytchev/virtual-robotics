@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Velocity sensor</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Velocity sensor</h1>
+		<h2>Retrieving velocity and speed with a sensor</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class VelocityRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var lastPart = new Robotic.EdgedTip( 1 );
+			
+			this.addChain(
+				this,
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.1, 0.5 ),
+				new Robotic.MotorZ( 2, -2, 0, 0.2, 0.3 ),
+				new Robotic.EdgedFinger( 1.5 ),
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.1, 0.1 ),
+				new Robotic.MotorZ( 0.0, -PI/2, 0, 0.25, 0.08 ),
+				lastPart,
+			);
+			
+			this.sensor = new Robotic.Sensor( ).attachToSlot( lastPart );
+		}
+	}
+
+
+	var robot = new VelocityRobot;
+
+	var m = 160; //traces
+	var traces = [];
+	var k = 2;
+	var n = m>>k; //traces
+	var arrows = [];
+	for( var i=0; i<m; i++ )
+	{
+		var trace = new Robotic.Mesh(
+			new Robotic.BoxGeometry( 0.01, 0.01, 0.01 ),
+			new Robotic.MeshLambertMaterial( {color: 'royalblue'} )
+		);
+		trace.castShadow = true;
+		traces.push( trace );
+	}
+	for( var i=0; i<n; i++ )
+	{
+		var arrow = new Robotic.ArrowHelper(
+				new Robotic.Vector3(),
+				new Robotic.Vector3(),
+				0,
+				0xff0000 );
+		arrow.castShadow = true;
+		arrows.push( arrow );
+	}
+	Robotic.getScene().add( ...traces );
+	Robotic.getScene().add( ...arrows );
+
+
+	
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 0, 6, 10 );
+
+	var i = 0;
+	function loop( t )
+	{
+		t = t + 0.3*sin(t);
+		robot.setAngles( 
+			t/2,
+			-1+0.3*sin(2*t),
+			0.4*sin(t),
+			-0.4*(1+cos(3*t)),
+		);
+
+		var pos = robot.sensor.sensePosition( ),
+			vel = robot.sensor.senseVelocity( ),
+			spd = robot.sensor.senseSpeed( );
+
+		traces[i%m].position.set( ...pos );
+
+		arrows[(i>>k)%n].position.set( ...pos );
+		arrows[(i>>k)%n].setDirection( new Robotic.Vector3(...vel).normalize( ) );
+		arrows[(i>>k)%n].setLength( 0.2*spd, 0.1, 0.05 );
+		
+		
+		i++;
+
+	}
+
+
+
+	</script>
+</body>

@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>VR mode</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>VR mode</h1>
+		<h2>An example using robots as virtual hands</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	//import * as Robotic from "../build/virtual-robotics.js";
+	import * as Robotic from "../src/virtual-robotics.js";
+
+	window.billboard0 = new Robotic.Box( 1, 0.1, 0.1, 'white' );
+		billboard0.setPosition( 0, 1.8, -2 );
+		billboard0.debugText( 'not connected' );
+
+	window.billboard1 = new Robotic.Box( 1, 0.1, 0.1, 'white' );
+		billboard1.setPosition( 0, 1.6, -2 );
+		billboard1.debugText( 'not connected' );
+
+	
+	// right hand
+	var A = new Robotic.EdgedHand( false );
+		A.setScale( 0.2 );
+		A.setRotation( -Math.PI/2, Math.PI/2, 0 );
+
+	// left hand
+	var B = new Robotic.EdgedHand( true );
+		B.setScale( 0.2 );
+		B.setRotation( -Math.PI/2, -Math.PI/2, 0 );
+	
+	Robotic.VR( A, B );
+
+	A.flexFingers( 0.3 );
+	B.flexFingers( 0.3 );
+
+	A.spreadFingers( 0.2 );
+	B.spreadFingers( 0.2 );
+	
+	
+	</script>
+</body>

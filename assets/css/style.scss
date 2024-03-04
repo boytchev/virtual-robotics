@@ -1,0 +1,82 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+.main-content {
+  padding: 4rem 4rem 2rem 4rem;
+}
+
+header.page-header {
+	padding: 1em 0 0 0;
+	margin-bottom: 0;
+	background-color: DimGray;
+	background-image: linear-gradient(120deg, Black, Gray, DimGray);
+
+}
+
+code {
+	font-size: 105% !important;
+}
+
+h1, h2, h3 {
+	border-bottom: 1px dotted gray;
+}
+
+.main-content h1 {
+	margin-top: 1em;
+	color: Black;
+}
+
+.main-content h2, .main-content h3 {
+	color: Black;
+}
+
+/* command */
+h4 {
+	font-size: 115% !important;
+	font-weight: bold;
+	border-bottom: 1px dotted gray;
+	font-family: Consolas, monospace;
+	background: var(--color-bg-tertiary);
+	padding-left: 0.5em;
+	border-left: solid 0.25em Gray;
+}
+
+h1.project-name,
+h2.project-tagline {
+	color: white !important;
+}
+
+h1.project-name {
+	margin-bottom: 0 !important;
+	padding-bottom: 0 !important;
+	border: none !important;
+}
+
+h2.project-tagline {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+	margin-bottom: 0 !important;
+	padding-bottom: 0.5em !important;
+	border-bottom: LightGray dotted 1px;
+}
+
+/* breadcrumbs */
+h5 {
+	text-align: center;
+	margin: 0 0 1em 0;
+	padding: 0.2em 0.5em;
+	background: var(--color-bg-tertiary);
+	border-bottom: 1px dotted gray;
+}
+
+// buttons
+.btn {
+	padding: 0.2em 1em;
+	margin: 0.5em;
+}
+
+.site-footer-owner {
+  font-weight: normal;
+}

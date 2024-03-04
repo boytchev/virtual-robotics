@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Virtual Robotics Logo Generator</title>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	
+	<script src="suica.js"></script>
+</head>
+
+<body>
+	<suica fullwindow>
+		<oxyz>
+		<orbit distance="40" altitude="2">
+		
+		
+	</suica>
+	
+		
+	<script>
+		s = Math.sin( radians(30) );
+		c = Math.cos( radians(30) );
+
+		n = 5;
+		r = 0.16*n;
+		r2 = 0.136*n; // hole
+		
+		
+		px = 0.13*n;
+		py = n*c-r;
+
+		wx = 0.315*n;
+		wy = n*c+r+0.1;
+
+		qx = 0.35*n;
+		qy = n*c+r+0.1;
+		
+		k = 0.75;
+		ux = px*(1-k)+k*wx;
+		uy = py*(1-k)+k*wy;
+		
+		k = 0.9;
+		vx = px*(1-k)+k*wx;
+		vy = py*(1-k)+k*wy;
+		
+		var curvedShape2 = shape( 3 );
+			moveTo( px, py );
+			lineTo( ux, uy );
+			curveTo( vx, vy, qx, qy ); 
+			lineTo( -qx, qy );
+			curveTo( -vx, vy, -ux, uy ); 
+			lineTo( -px, py );
+
+		var curvedShape = shape( 3 );
+			moveTo( 0, 0 );
+			arc( 0, 0, r, 60, 300, !true );
+			curvedShape.shape.absarc( -n*s, n*c, r, radians(210), radians(30), true );
+			lineTo( 0, 2*r );
+			curvedShape.shape.absarc( n*s, n*c, r, radians(150), radians(-30), true );
+
+
+		var circleHole1 = shape( 3 );
+			circleHole1.shape.absarc( 0, 0, r2, radians(0), radians(360), !true );
+		
+		var circleHole2 = shape( 3 );
+			circleHole2.shape.absarc( n*s, n*c, r2, radians(0), radians(360), !true );
+		
+		var circleHole3 = shape( 3 );
+			circleHole3.shape.absarc( -n*s, n*c, r2, radians(0), radians(360), !true );
+		
+		ia = extrude( [curvedShape, circleHole1, circleHole2, circleHole3], [0,-5,0], [2,2,2] );
+			its.count = [10, 60];
+			its.radius = 0.1;
+			//its.offset = -0.2;
+			its.threejs.material = new THREE.MeshPhysicalMaterial({
+				color: 'royalblue',
+				roughness: 0.5,
+				metalness: 0.5
+			});
+
+		ib = extrude( [curvedShape2], [0,-5,0], [2,2,2] );
+			its.count = [30, 60];
+			its.radius = 0.1;
+			//its.offset = -0.2;
+			its.threejs.material = new THREE.MeshPhysicalMaterial({
+				color: 'royalblue',
+				roughness: 0.5,
+				metalness: 0.5
+			});
+			
+		//model.save( 'logo.glb', [ia,ib] );
+	</script>
+	
+</body>
+</html>

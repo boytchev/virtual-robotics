@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Two hands</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Two hands</h1>
+		<h2>Prototype models of robotic hands</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+
+	class LeftHand extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var palm = new Robotic.EdgedPalm( true );
+				palm.attachToSlot( this );
+			
+			this.addChain(
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 0 ),
+					new Robotic.EdgedFinger(),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+			
+			this.addChain( 
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 1 ),
+					new Robotic.EdgedFinger(),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+			
+			this.addChain( 
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 2 ),
+					new Robotic.EdgedFinger( 1.1 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+			
+			this.addChain( 
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 3 ),
+					new Robotic.EdgedFinger( ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+			
+			this.addChain( 
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 4 ),
+					new Robotic.EdgedFinger( 0.8 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+		}
+		
+	}
+
+
+
+	class RightHand extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+			
+			var palm = new Robotic.EdgedPalm( false );
+				palm.attachToSlot( this );
+			
+			this.addChain(
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 0 ),
+					new Robotic.EdgedFinger(),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+			
+			this.addChain( 
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 1 ),
+					new Robotic.EdgedFinger(),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+
+			this.addChain( 
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 2 ),
+					new Robotic.EdgedFinger( 1.1 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+			
+			this.addChain( 
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 3 ),
+					new Robotic.EdgedFinger( ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+			
+			this.addChain(
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ).attachToSlot( palm, 4 ),
+					new Robotic.EdgedFinger( 0.8 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedFinger( 0.5 ),
+					new Robotic.MotorZ( 0, -PI/2, -PI/4, 0.3, 0.1 ),
+					new Robotic.EdgedTip( 0.5 )
+				);
+		}
+		
+	}
+
+
+
+	var A = new LeftHand( );
+		A.setPosition( -2, 0.2, 0);
+		A.setRotation( -0.3, -0.5, 0.2 );
+
+	var B = new RightHand( );
+		B.setPosition( 2, 0.2, 0 );
+		B.setRotation( -0.3, 0.5, -0.2 );
+
+	Robotic.setCameraPosition( 4, 2, -10 );
+	Robotic.setCameraTarget( 0, 1.5, 0 );
+	Robotic.setAnimation( loop );
+
+	var motors = A.getMotors().length;
+	
+	function loop( t )
+	{
+		for( var i=0; i<2; i++ )
+		{
+			var sin = -PI/4-PI/4*(1+Math.sin(2*t-i/3));
+			A.setAngle( i, sin );
+			B.setAngle( i, sin );
+		}
+
+		for( var i=3; i<motors; i++ )
+		{
+			var sin = -PI/4*(1+Math.sin(3*t-i/3));
+			A.setAngle( i, sin );
+			B.setAngle( i, sin );
+		}
+	}
+
+
+	</script>
+</body>

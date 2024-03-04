@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Graphs</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Graphs</h1>
+		<h2>Showing graphs with data from sensors</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	//import * as Robotic from "../build/virtual-robotics.js";
+	import * as Robotic from "../src/virtual-robotics.js";
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class SimpleRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+
+			var tip = this.addChain(
+							this,
+							new Robotic.EdgedFinger( 1.4 ),
+							new Robotic.EdgedFinger( 1 ),
+							new Robotic.Ball( 0.15 ),
+						);
+
+			this.sensor = new Robotic.Sensor( ).attachToSlot( tip );
+		}
+	}
+
+	
+	var A = new SimpleRobot( );
+		A.setScale( 0.2 );
+		A.setPosition( 0.3, 0.5, 0 );
+		A.setRotation( 0, PI/2, -PI/2 );
+		A.setProperty( 'vr-reset-position', true );
+
+	var graph = new Robotic.Graph( 'Speed (blue ↔, red ↕)' );
+		graph.setPosition( 0, 0.5, -0.8 );
+		graph.setGrid( 20, 10, 0, 5 );
+		graph.setGraph( 0, [], 'blue', 0, 10, -5, 5);
+		graph.setGraph( 1, [], 'crimson', 0, 10, -5, 5);
+	
+	Robotic.setVR( A );
+	Robotic.setAnimation( loop );
+
+	function loop( t )
+	{
+		var v = A.sensor.senseVelocity();
+		graph.addData( 0, t, v[0] );
+		graph.addData( 1, t, v[1] );
+	}
+	</script>
+</body>

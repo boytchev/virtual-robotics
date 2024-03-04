@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Simple robot</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Simple robot</h1>
+		<h2>Construction of a simple robot</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	import * as Robotic from "../build/virtual-robotics.js";
+	//import * as Robotic from "../src/virtual-robotics.js";
+
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class SimpleRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+
+			this.addChain(
+				this,
+				new Robotic.MotorY( -Infinity, Infinity, 0, 0.6, 0.1 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.34, 0.25 ),
+				new Robotic.EdgedFinger( ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.2 ),
+				new Robotic.EdgedFinger( 0.5 ),
+				new Robotic.MotorZ( 0, -PI/2, 0, 0.2 ),
+				new Robotic.EdgedTip( 0.5 ),
+			);
+		}
+	}
+
+	var robot = new SimpleRobot;
+	
+
+	Robotic.setAnimation( loop );
+	Robotic.setCameraPosition( 0, 2, 5 );
+
+	function loop( t )
+	{
+		robot.setAngles( 
+			t,
+			-PI/4*(0.5 + 0.5*sin(2*t)),
+			-PI/2*(0.5 + 0.5*sin(2*t)),
+			-PI/2*(0.5 + 0.5*sin(2*t))
+		);
+	}
+
+
+	</script>
+</body>

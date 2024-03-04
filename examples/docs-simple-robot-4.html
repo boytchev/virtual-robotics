@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+
+
+<body>
+	<script type="module">
+
+	import * as Robotic from "../build/virtual-robotics.js";
+
+	class Digger extends Robotic.Robot
+	{
+		constructor( speed )
+		{
+			super( );
+			
+			this.speed = speed;
+			this.attachChain(
+				new Robotic.MotorZ( -0.7, 0.7, 0, 0.2, 0.6 ),
+				new Robotic.EdgedFinger( 1, 1, 0.1 ),
+				new Robotic.MotorZ( -1.6, 0, 0, 0.4, 0.3 ),
+				new Robotic.EdgedFinger( 2 ),
+				new Robotic.MotorZ( -1.6, 0, 0, 0.4, 0.2 ),
+				new Robotic.EdgedFinger( 0.7, 0.1 ),
+			);
+		}
+		
+		dig( time )
+		{
+			time = time * this.speed;
+			
+			this.setAngles( 
+				-0.7*Math.sin(time+3),
+				-1.6*(0.5 + 0.5*Math.sin(time+1)),
+				-1.6*(0.5 + 0.5*Math.sin(time))
+			);
+		}
+	}
+	
+	
+	var robotA = new Digger(2);
+	var robotB = new Digger(3);
+	var robotC = new Digger(4);
+
+	robotA.setPosition( 0, 0, 1 );
+	robotC.setPosition( 0, 0, -1 );
+	
+	Robotic.setAnimation( loop );
+
+	function loop( t )
+	{
+		robotA.dig( t );
+		robotB.dig( t );
+		robotC.dig( t );
+	}
+
+	</script>
+</body>

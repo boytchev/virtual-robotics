@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+
+
+<head>
+	<title>Labels</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link rel="shortcut icon" type="image/png" href="logo.png"/>
+	<link rel="stylesheet" href="examples.css">
+</head>
+
+
+<body>
+	<header>
+		<h1>Labels</h1>
+		<h2>Showing labels with custom-defined texts</h2>
+		<h3><a href="https://boytchev.github.io/virtual-robotics/">Virtual Robotics Examples</a></h3>
+	</header>
+	
+	<script type="module">
+
+
+	//import * as Robotic from "../build/virtual-robotics.js";
+	import * as Robotic from "../src/virtual-robotics.js";
+
+	const PI = Math.PI;
+	const sin = Math.sin;
+	const cos = Math.cos;
+
+
+	class SimpleRobot extends Robotic.Robot
+	{
+		constructor( )
+		{
+			super( );
+
+			this.addChain(
+				this,
+				new Robotic.EdgedFinger( 1.4 ),
+				new Robotic.EdgedFinger( 1 ),
+				new Robotic.Ball( 0.15 ),
+			);
+		}
+	}
+
+	
+	var A = new SimpleRobot( );
+		A.setScale( 0.2 );
+		A.setPosition( 0.3, 0.5, 0 );
+		A.setRotation( 0, PI/2, -PI/2 );
+		A.setProperty( 'vr-reset-position', true );
+
+	var B = new SimpleRobot( );
+		B.setScale( 0.2 );
+		B.setPosition( -0.3, 0.5, 0 );
+		B.setRotation( 0, PI/2, -PI/2 );
+		B.setProperty( 'vr-reset-position', true );
+		
+		Robotic.setVR( A, B );
+
+	var label = new Robotic.Label( );
+		label.setPosition( 0, 0.5, -0.8 );
+	
+	var ball = new Robotic.Ball( 0.06, 'white' );
+		ball.setPosition( 0.4, 0.47, -0.8 );
+	
+		ball.beginContact = function( )
+		{
+			ball.mainMesh.material.color.set( 'royalblue' );
+			pushButton( );
+		}
+		
+		ball.endContact = function( )
+		{
+			ball.mainMesh.material.color.set( 'white' );
+		}
+		
+	var n = -1;
+	
+	function pushButton( )
+	{
+		label.setText( 'Counter:', 10, 40, '60px Arial' );
+		label.addText( ++n, 250, 20, 'bold 128px Arial' );
+		label.addText( 'Push', 430, 90, '30px Arial' );
+	}
+	
+	pushButton( );
+	
+	</script>
+</body>
